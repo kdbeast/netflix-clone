@@ -2,6 +2,14 @@
 
 - Vite 
 - Configured TailwindCSS
+- Header
+- Routing of App
+- Login Form
+- Sign up Form
+- Form Validation
+- useRef Hook
+- Firebase Setup
+- Deploying our app to prodution
 
 # Features
 - Login/Sign Up
