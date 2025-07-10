@@ -13,6 +13,16 @@ export const API_OPTIONS = {
   },
 };
 
-export const IMG_CDN = "https://image.tmdb.org/t/p/w500/"
+export const IMG_CDN = "https://image.tmdb.org/t/p/w500/";
 
-export const BG_URL = "https://assets.nflxext.com/ffe/siteui/vlv3/75b0ed49-75ab-4a63-bd45-37bc2c95cb73/web/IN-en-20250623-TRIFECTA-perspective_ae5833b7-6ce5-4e88-853e-014f38c506f1_medium.jpg"
+export const BG_URL =
+  "https://assets.nflxext.com/ffe/siteui/vlv3/75b0ed49-75ab-4a63-bd45-37bc2c95cb73/web/IN-en-20250623-TRIFECTA-perspective_ae5833b7-6ce5-4e88-853e-014f38c506f1_medium.jpg";
+
+export const SUPPORTED_LANGUAGES = [
+  { identifier: "en", name: "English" },
+  { identifier: "hindi", name: "Hindi" },
+  { identifier: "spanish", name: "Spanish" },
+];
+
+export const OPENAI_KEY = "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"
+
