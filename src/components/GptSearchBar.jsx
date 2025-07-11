@@ -1,12 +1,14 @@
 import openai from "../utils/openai";
 import { useRef } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import lang from "../utils/languageConstansts";
 import { API_OPTIONS } from "../utils/constants";
+import { addGptMovieResult } from "../utils/gptSlice";
 
 const GptSearchBar = () => {
   const langKey = useSelector((store) => store.config.lang);
   const searchText = useRef(null);
+  const dispatch = useDispatch();
 
   const searchMovieTMDB = async (movie) => {
     const data = await fetch(
@@ -20,22 +22,50 @@ const GptSearchBar = () => {
   const handleGptSearchClick = async () => {
     console.log(searchText.current.value);
 
+    const config = {
+      thinkingConfig: {
+        thinkingBudget: -1,
+      },
+      responseMimeType: "text/plain",
+    };
+    const model = "gemini-2.5-flash-lite-preview-06-17";
+
     const gptQuery =
       "Act as a Movie Recommendation system and suggest some movies for th query : " +
       searchText.current.value +
       ". only give me names of 5 movies, comma seperated like the example result given ahead. Example Result: Gadar, Sholay, Don, Golmaal, Koi Mil Gaya";
 
-    const gptResults = await openai.chat.completions.create({
-      message: [{ role: "user", content: gptQuery }],
-      model: "gpt-3.5-turbo",
+    const contents = [
+      {
+        role: "user",
+        parts: [
+          {
+            text: gptQuery,
+          },
+        ],
+      },
+    ];
+
+    const gptResults = await openai.models.generateContentStream({
+      model,
+      config,
+      contents,
     });
-    console.log(gptResults.choices[0].message.content);
 
-    const gptMovies = gptResults.choices[0].message.content.split(",");
+    let moviesStr = "";
+    for await (const chunk of gptResults) {
+      moviesStr += chunk.text;
+    }
+    console.log(moviesStr);
+    const gptMovies = moviesStr.split(",");
 
-    const data = gptMovies.map((movie) => searchMovieTMDB(movie));
-    const tmdbResults = await Promise.all(data);
+    const promiseArray = gptMovies.map((movie) => searchMovieTMDB(movie));
+
+    const tmdbResults = await Promise.all(promiseArray);
     console.log(tmdbResults);
+    dispatch(
+      addGptMovieResult({ movieNames: gptMovies, movieResults: tmdbResults })
+    );
   };
 
   return (
